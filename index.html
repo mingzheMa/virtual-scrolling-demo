@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>virtual scrolling</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+
+      #ul {
+        height: 300px;
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+        border: 1px solid;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="ul">
+      <!-- li -->
+    </ul>
+
+    <!-- 性能测试 -->
+    <script>
+      const perf = window.performance
+      window.addEventListener("load", () => {
+        const time = perf.timing.domComplete - perf.timing.domLoading
+        console.log(time + "ms")
+      })
+    </script>
+
+    <!-- 获取数据 -->
+    <script>
+      function getData() {
+        const arr = new Array(100000).fill()
+        return arr.map((v, i) => ({
+          index: i
+        }))
+      }
+    </script>
+
+    <!-- 一次性渲染 -->
+    <!-- <script>
+      const ulEl = document.querySelector("#ul")
+      const liFragment = document.createDocumentFragment()
+
+      const data = getData()
+      data.forEach(d => {
+        const liEl = document.createElement("li")
+        liEl.innerHTML = `<i>${d.index}</i>`
+        liFragment.appendChild(liEl)
+      })
+
+      ulEl.appendChild(liFragment)
+    </script> -->
+
+    <script type="module">
+      import VirtualList from "./index.js"
+
+      const ulEl = document.querySelector("#ul")
+
+      const data = getData()
+
+      const list = new VirtualList(ulEl, data, 30, row => {
+        return `<li style="height:30px">${row.index}</li>`
+      })
+    </script>
+  </body>
+</html>
